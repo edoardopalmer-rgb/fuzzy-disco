@@ -12,13 +12,13 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Build Docker image
-      run: |
-        docker build -t my-java-app .
+      run: docker build -t my-java-app .
 
     - name: Run tests inside Docker
       run: |
         docker run --rm \
+          --entrypoint bash \
           -v ${{ github.workspace }}:/app \
           -w /app \
           my-java-app \
-          bash -c "mvn -q -Dheadless=true test"
+          -c "mvn -q -Dheadless=true test"
