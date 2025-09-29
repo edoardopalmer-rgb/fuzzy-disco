@@ -14,6 +14,18 @@ jobs:
     - name: Build Docker image
       run: docker build -t my-java-app .
 
+
+    - name: Debug command
+      run: |
+        docker run --rm \
+        --entrypoint bash \
+        -v ${{ github.workspace }}:/app \
+        -w /app \
+        my-java-app \
+        -c "echo 'ChromeOptions might be using: --user-data-dir=/tmp/chrome or similar'"
+
+
+
     - name: Run tests inside Docker
       run: |
         docker run --rm \
