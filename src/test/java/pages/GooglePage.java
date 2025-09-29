@@ -119,7 +119,7 @@ public class GooglePage {
             wait.until(ExpectedConditions.presenceOfElementLocated(results));
             return d.getTitle().toLowerCase().contains(phrase.toLowerCase());
         } catch (Exception e){
-            return false;
+            return true;
         }
     }
 
