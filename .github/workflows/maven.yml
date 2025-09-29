@@ -20,4 +20,5 @@ jobs:
         docker run --rm \
           -v ${{ github.workspace }}:/app \
           -w /app \
-          my-java-app mvn -q -Dheadless=true test
+          my-java-app \
+          bash -c "mvn -q -Dheadless=true test"
