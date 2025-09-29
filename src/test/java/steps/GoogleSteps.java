@@ -10,6 +10,7 @@ public class GoogleSteps {
 
   @Given("a web browser is on the Google page")
   public void openGoogle(){
+      
     google = new GooglePage(DriverFactory.get());
   }
 

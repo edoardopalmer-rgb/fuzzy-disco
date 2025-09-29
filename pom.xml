@@ -68,7 +68,31 @@
         </configuration>
       </plugin>
 
-      <plugin>
+                <plugin>
+                    <groupId>net.masterthought</groupId>
+                    <artifactId>maven-cucumber-reporting</artifactId>
+                    <version>5.8.0</version>
+                    <executions>
+                        <execution>
+                            <id>generate-cucumber-html-report</id>
+                            <phase>verify</phase>
+                            <goals>
+                                <goal>generate</goal>
+                            </goals>
+                            <configuration>
+                                <projectName>Google Search Project</projectName>
+                                <outputDirectory>${project.build.directory}/surefire-reports</outputDirectory>
+                                <jsonFiles>
+                                    <param>${project.build.directory}/surefire-reports/cucumber.json</param>
+                                </jsonFiles>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+
+
+
+        <plugin>
         <groupId>net.masterthought</groupId>
         <artifactId>maven-cucumber-reporting</artifactId>
         <version>5.8.0</version>
