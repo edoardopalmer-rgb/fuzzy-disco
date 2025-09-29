@@ -16,7 +16,6 @@ jobs:
 
     - name: Run tests in Docker (with Chrome profile fix)
       run: |
-        # Crea una directory temporanea da usare come user-data-dir
         mkdir -p ${{ runner.temp }}/chrome-user-data
 
         docker run --rm \
@@ -24,3 +23,8 @@ jobs:
           -v ${{ runner.temp }}/chrome-user-data:/tmp/chrome-user-data \
           -w /app \
           my-java-app
+
+                 
+    - name: runtest
+      run: |
+        mvn -q -Dheadless=true test
