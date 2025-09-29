@@ -34,6 +34,6 @@ jobs:
         
     - name: runtest
       run: |
-        mvn -q -Dheadless=false test
+        mvn -q -Dheadless=true test
 
         
