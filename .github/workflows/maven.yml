@@ -1,4 +1,4 @@
-name: Java CI with Docker
+name: Java CI with Docker (Chrome fix)
 
 on:
   workflow_dispatch:
@@ -14,15 +14,13 @@ jobs:
     - name: Build Docker image
       run: docker build -t my-java-app .
 
-
-    - name: Debug command
+    - name: Run tests inside Docker (with unique Chrome user data)
       run: |
-        docker run --rm \
-        --entrypoint bash \
-        -v ${{ github.workspace }}:/app \
-        -w /app \
-        my-java-app \
-        -c "echo 'ChromeOptions might be using: --user-data-dir=/tmp/chrome or similar'"
+        # Crea una dir temporanea da montare come user-data-dir
+        mkdir -p ${{ runner.temp }}/chrome-user-data
 
-    - name: Run tests inside Docker
-      run: docker run --rm -v ${{ github.workspace }}:/app -w /app my-java-app
+        docker run --rm \
+          -v ${{ github.workspace }}:/app \
+          -v ${{ runner.temp }}/chrome-user-data:/tmp/chrome-user-data \
+          -w /app \
+          my-java-app
