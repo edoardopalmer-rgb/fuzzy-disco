@@ -1,35 +1,21 @@
-name: Java CI with Docker
-
-on:
-  workflow_dispatch:
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-
-    - name: Build Docker image
+ - name: Build Docker image
       run: docker build -t my-java-app .
 
-    - name: Run tests in Docker
+
+    - name: Debug command
       run: |
-        mkdir -p ${{ runner.temp }}/chrome-user-data
-
         docker run --rm \
-          -v ${{ github.workspace }}:/app \
-          -v ${{ runner.temp }}/chrome-user-data:/tmp/chrome-user-data \
-          -w /app \
-          my-java-app \
-          mvn -Dheadless=true test
+        --entrypoint bash \
+        -v ${{ github.workspace }}:/app \
+        -w /app \
+        my-java-app \
+        -c "echo 'ChromeOptions might be using: --user-data-dir=/tmp/chrome or similar'"
 
-    - name: List surefire reports
+
+
+
+
+    - name: Run tests inside Docker
+      run: |
+        docker run --rm \
       run: ls -la target/surefire-reports || echo "No reports found"
-
-    - name: Upload test reports artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: test-reports
-        path: target/surefire-reports
