@@ -29,7 +29,7 @@ jobs:
       run: ls -la target/surefire-reports || echo "No reports found"
 
     - name: Upload test reports artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: test-reports
         path: target/surefire-reports
