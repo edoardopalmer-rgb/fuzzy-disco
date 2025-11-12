@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Spettacoli | Biglietteria Online</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header><h1>Spettacoli Disponibili</h1></header>
+  <main>
+    <div id="spettacoli-container">Caricamento spettacoli...</div>
+    <div class="nav-links"><a href="menu.html">Torna al Menu</a></div>
+  </main>
+
+  <script>
+    const codCliente = localStorage.getItem("codCliente");
+    if (!codCliente) window.location.href = "index.html";
+
+    fetch("http://localhost:8080/api/spettacoli")
+      .then(r => r.json())
+      .then(data => {
+        const container = document.getElementById("spettacoli-container");
+        container.innerHTML = "";
+        data.forEach(sp => {
+          const div = document.createElement("div");
+          div.classList.add("card");
+          div.innerHTML = `
+            <h3>${sp.titolo}</h3>
+            <p><strong>Autore:</strong> ${sp.autore}</p>
+            <p><strong>Regista:</strong> ${sp.regista}</p>
+            <p><strong>Prezzo:</strong> €${sp.prezzo.toFixed(2)}</p>
+            <p><strong>Teatro:</strong> ${sp.teatro.nome} (${sp.teatro.citta})</p>
+            <button class="btn-dettagli" data-cod="${sp.codSpettacolo}">Vedi Repliche</button>
+          `;
+          container.appendChild(div);
+        });
+
+        document.querySelectorAll(".btn-dettagli").forEach(btn => {
+          btn.addEventListener("click", () => {
+            const codSpettacolo = btn.getAttribute("data-cod");
+            window.location.href = `prenota.html?codSpettacolo=${codSpettacolo}`;
+          });
+        });
+      })
+      .catch(() => document.getElementById("spettacoli-container").textContent = "Errore nel caricamento.");
+  </script>
+</body>
+</html>

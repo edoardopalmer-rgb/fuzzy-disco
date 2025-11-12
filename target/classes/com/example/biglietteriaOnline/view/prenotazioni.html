@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Le mie Prenotazioni</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>Le mie Prenotazioni</h1>
+  </header>
+
+  <main>
+    <div id="contenuto">Caricamento...</div>
+    <div class="nav-links">
+      <a href="menu.html">Torna al Menu</a>
+    </div>
+  </main>
+
+  <script>
+    const codCliente = localStorage.getItem("codCliente");
+    if (!codCliente) window.location.href = "index.html";
+
+    fetch(`http://localhost:8080/api/prenotazioni/${codCliente}`)
+      .then(res => res.json())
+      .then(data => {
+        const contenuto = document.getElementById("contenuto");
+        contenuto.innerHTML = "";
+        if (!Array.isArray(data) || data.length === 0) {
+          contenuto.innerHTML = "<p class='no-data'>Nessuna prenotazione trovata.</p>";
+          return;
+        }
+
+        let html = `
+          <table>
+            <tr>
+              <th>Cod. Operazione</th>
+              <th>Cod. Replica</th>
+              <th>Data / Ora</th>
+              <th>Tipo Pagamento</th>
+              <th>Quantità</th>
+            </tr>
+        `;
+        data.forEach(p => {
+          const dataOra = new Date(p.dataOra).toLocaleString("it-IT");
+          html += `
+            <tr>
+              <td>${p.codOperazione}</td>
+              <td>${p.codReplica}</td>
+              <td>${dataOra}</td>
+              <td>${p.tipoPagamento}</td>
+              <td>${p.quantita}</td>
+            </tr>
+          `;
+        });
+        html += "</table>";
+        contenuto.innerHTML = html;
+      })
+      .catch(err => document.getElementById("contenuto").textContent = "Errore: " + err);
+  </script>
+</body>
+</html>
