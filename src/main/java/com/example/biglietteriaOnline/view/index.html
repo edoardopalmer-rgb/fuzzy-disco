@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Accesso Clienti - Biglietteria Online</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>Biglietteria Online</h1>
+  </header>
+
+  <main>
+    <h2>Accesso Cliente</h2>
+    <form id="form-login">
+      <label>Codice Cliente</label>
+      <input type="number" id="codCliente" required>
+      <input type="submit" value="Accedi">
+    </form>
+    <p id="msg" style="text-align:center;"></p>
+  </main>
+
+  <script>
+    document.getElementById("form-login").addEventListener("submit", e => {
+      e.preventDefault();
+      const codCliente = document.getElementById("codCliente").value.trim();
+      if (!codCliente) return;
+      localStorage.setItem("codCliente", codCliente);
+      window.location.href = "menu.html";
+    });
+  </script>
+</body>
+</html>

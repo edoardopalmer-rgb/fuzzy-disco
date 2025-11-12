@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Prenota | Biglietteria Online</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header><h1>Prenotazione Biglietti</h1></header>
+
+  <main>
+    <h2 id="titolo-spettacolo">Caricamento spettacolo...</h2>
+    <div id="loading" style="text-align:center;color:#a4161a;margin-top:10px;">Caricamento repliche...</div>
+
+    <form id="form-prenota" style="display:none;flex-direction:column;gap:10px;max-width:400px;margin:auto;">
+      <label>Codice Cliente</label>
+      <input type="number" id="codCliente" readonly visible="false">
+
+      <label>Replica disponibile</label>
+      <select id="repliche" required>
+        <option value="">-- Seleziona una replica --</option>
+      </select>
+
+      <label>Quantità</label>
+      <input type="number" id="quantita" min="1" required>
+
+      <label>Tipo Pagamento</label>
+      <input type="text" id="tipoPagamento" placeholder="Carta / Bonifico" required>
+
+      <input type="submit" value="Prenota">
+    </form>
+
+    <p id="risultato" style="text-align:center;"></p>
+
+    <div class="nav-links">
+      <a href="spettacoli.html">← Torna agli Spettacoli</a>
+    </div>
+  </main>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const codSpettacolo = params.get("codSpettacolo");
+    const codCliente = localStorage.getItem("codCliente");
+    const titolo = document.getElementById("titolo-spettacolo");
+    const loading = document.getElementById("loading");
+    const form = document.getElementById("form-prenota");
+    const replicheSel = document.getElementById("repliche");
+    const risultato = document.getElementById("risultato");
+
+    if (!codCliente) {
+      alert("Devi prima effettuare il login!");
+      window.location.href = "index.html";
+    } else {
+      document.getElementById("codCliente").value = codCliente;
+    }
+
+    if (!codSpettacolo) {
+      titolo.textContent = "Errore: nessuno spettacolo selezionato.";
+      loading.style.display = "none";
+    } else {
+      const url = `http://localhost:8080/api/repliche/${codSpettacolo}`;
+      console.log("Richiesta a:", url);
+
+      fetch(url)
+        .then(r => {
+          if (!r.ok) throw new Error("Errore HTTP " + r.status);
+          return r.json();
+        })
+        .then(data => {
+          console.log("Risposta:", data);
+
+          if (!Array.isArray(data) || data.length === 0) {
+            titolo.textContent = "Nessuna replica disponibile per questo spettacolo.";
+            loading.style.display = "none";
+            return;
+          }
+
+          const spettacolo = data[0].spettacolo;
+          titolo.textContent = `${spettacolo.titolo} – ${spettacolo.teatro.nome} (${spettacolo.teatro.citta})`;
+
+          data.forEach(rep => {
+            const opt = document.createElement("option");
+            opt.value = rep.codReplica;
+            opt.textContent = `${rep.dataReplica} – ${rep.spettacolo.teatro.nome}`;
+            replicheSel.appendChild(opt);
+          });
+
+          form.style.display = "flex";
+          loading.style.display = "none";
+        })
+        .catch(err => {
+          console.error("Errore nel caricamento repliche:", err);
+          titolo.textContent = "Errore nel caricamento delle repliche.";
+          loading.textContent = "Dettagli: " + err.message;
+          loading.style.color = "red";
+        });
+    }
+
+    form.addEventListener("submit", e => {
+      e.preventDefault();
+      const codReplica = replicheSel.value;
+      const quantita = document.getElementById("quantita").value;
+      const tipoPagamento = document.getElementById("tipoPagamento").value;
+
+      if (!codReplica) {
+        risultato.textContent = "Seleziona una replica.";
+        risultato.style.color = "red";
+        return;
+      }
+
+      const prenotaUrl = `http://localhost:8080/api/prenota?codCliente=${codCliente}&codReplica=${codReplica}&quantita=${quantita}&tipoPagamento=${tipoPagamento}`;
+      console.log("Invio prenotazione a:", prenotaUrl);
+
+      fetch(prenotaUrl, { method: "POST" })
+        .then(res => res.text())
+        .then(msg => {
+          risultato.textContent = msg;
+          risultato.style.color = msg.includes("effettuata") ? "green" : "red";
+        })
+        .catch(err => {
+          risultato.textContent = "Errore: " + err.message;
+          risultato.style.color = "red";
+        });
+    });
+  </script>
+</body>
+</html>

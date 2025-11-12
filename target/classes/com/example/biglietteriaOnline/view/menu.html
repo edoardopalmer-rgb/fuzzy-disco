@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Menu Principale</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>Menu Principale</h1>
+  </header>
+
+  <main>
+    <h2>Cliente n° <span id="cliente"></span></h2>
+    <div class="nav-links">
+      <a href="spettacoli.html">Visualizza Spettacoli</a>
+      <a href="prenotazioni.html">Le mie Prenotazioni</a>
+    </div>
+  </main>
+
+  <script>
+    const codCliente = localStorage.getItem("codCliente");
+    if (!codCliente) window.location.href = "index.html";
+    document.getElementById("cliente").textContent = codCliente;
+  </script>
+</body>
+</html>
